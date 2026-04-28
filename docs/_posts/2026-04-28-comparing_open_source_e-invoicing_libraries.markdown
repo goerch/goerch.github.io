@@ -219,6 +219,47 @@ commercial dependencies.
 
 ---
 
+## Three Ironies — and a Hidden Fourth
+
+Stepping back, the landscape described in this post contains a set of structural ironies that
+are worth naming explicitly, because together they explain a lot about why the ecosystem looks
+the way it does.
+
+**The first irony** is commercial: ZUGFeRD-csharp's paid validation tier advertises that it
+calls [Mustang](https://github.com/ZUGFeRD/mustangproject) — a free Java competitor — as one
+of its backends. Whatever the integration value, announcing this publicly tells potential
+customers that the core capability is available for free elsewhere.
+
+**The second irony** is a platform one: .NET, the ecosystem being used to implement a legally
+mandatory invoicing standard, natively supports only XSLT 1.0 — while the KoSIT validation
+rules that define conformance with that standard are written in XSLT 2.0. The platform and the
+standard passed each other in opposite directions, and nobody built the bridge. The result is
+that the .NET library's commercial validation tier ends up shelling out to a Java process, which
+is the one mainstream platform where the bridge was in fact built.
+
+**The third irony** is a browser one. Chrome has officially deprecated
+XSLT, with removal from stable releases planned for November 2026 — and Firefox and WebKit have
+indicated plans to follow. The stated reason is security: 
+`libxslt` was unmaintained for roughly six months of 2025, and as an aging C codebase it
+represents a potent attack surface for a feature that is now rarely used on the web.
+The XSLT stylesheets bundled in both libraries for generating human-readable HTML invoice views
+will stop working in browsers that do this rendering client-side. To be clear, this does
+*not* affect server-side validation or rendering pipelines — mustangproject, the KoSIT validator,
+and any server-side workflow are unaffected. But it is a reminder that the browser ecosystem,
+which never advanced beyond XSLT 1.0 either, is now actively retreating even from that.
+
+**The hidden fourth irony** underlies all three. XSLT 2.0 was published as a W3C recommendation
+in 2007. The broader platform ecosystem — browsers, .NET, and others — largely chose not to
+implement it. The standards bodies building XRechnung validation on XSLT 2.0 Schematron were
+making a reasonable technical bet on a published W3C standard; the platform world had quietly
+decided not to honour it. Saxonica filled the gap and now holds something close to a monopoly
+on XSLT 2.0/3.0 processing, with all the open source sustainability risk that entails. Java
+happens to be the platform where Saxonica's open source tier works cleanly — and so mustangproject,
+almost incidentally, ended up on the right side of a technology adoption decision made twenty
+years ago by people who were thinking about something else entirely.
+
+---
+
 ## Summary
 
 | Topic | Observation |
@@ -230,6 +271,7 @@ commercial dependencies.
 | mustangproject | Java, fully open source, validation built in via KoSIT Schematron |
 | ZUGFeRD-csharp | .NET, moving to open-core from v18; validation in commercial tier |
 | XSLT 2.0 on .NET | Built-in stack is XSLT 1.0 only; Saxon-HE requires .NET Framework; SaxonCS is commercial — structural barrier to free validation on modern .NET |
+| Browser XSLT removal | Chrome removing XSLT from stable in Nov 2026; Firefox and WebKit to follow — affects client-side rendering only, not server-side validation |
 | XRechnung vs ZUGFeRD | Different formats, different governance; XRechnung is legally mandatory for B2G |
 | B2B obligation | Receiving mandatory since Jan 2025; sending from Jan 2027 |
 | "Certified by KoSIT" | No such scheme exists; passing the KoSIT validator is the conformance test |
