@@ -23,7 +23,7 @@ email: jhr.walter@t-online.de
 description: >- # this means to ignore newlines until "baseurl:"
   Everything the company does not claim
 baseurl: "" # the subpath of your site, e.g. /blog
-# domain: goerch.github.io       # if you want to force HTTPS, specify the domain without the http at the start, e.g. example.com
+# domain: goerch.github.io      # if you want to force HTTPS, specify the domain without the http at the start, e.g. example.com
 url: "https://goerch.github.io" # the base hostname & protocol for your site, e.g. http://example.com
 # twitter_username: jekyllrb
 github_username:  goerch
