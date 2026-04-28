@@ -180,6 +180,45 @@ commercial tier. This is a risk worth factoring into dependency decisions.
 
 ---
 
+## Why .NET Validation Delegates to Java: The XSLT 2.0 Gap
+
+The decision to call Mustang from the commercial .NET validation tier is not arbitrary — it
+reflects a structural platform limitation that is worth understanding.
+
+The KoSIT Schematron validation rules are compiled to **XSLT 2.0**. The built-in .NET XML stack
+(`XslCompiledTransform`) only supports XSLT 1.0. As one developer put it plainly in the
+ZUGFeRD-csharp issue tracker, `document-uri()` — an XSLT 2.0 function used in the KoSIT
+stylesheets — is simply not recognised, making native .NET validation impossible without an
+external processor.
+
+The natural solution is [Saxon-HE](https://github.com/Saxonica/Saxon-HE), the open source XSLT
+3.0 processor from Saxonica, available as a NuGet package. However, here the platform
+fragmentation becomes painful:
+
+- **Saxon-HE for .NET Framework** works and has been demonstrated in community contributions
+  to ZUGFeRD-csharp, but ZUGFeRD-csharp targets **.NET Standard**, not .NET Framework.
+- **SaxonCS** — the modern .NET Standard/Core-compatible version — is a **commercial product**,
+  not open source, and was described in the ZUGFeRD-csharp community as unaffordably expensive
+  for an open source library dependency.
+
+This is corroborated by our own experiments, which reached the same conclusion independently.
+
+The net result is a somewhat uncomfortable situation for the .NET e-invoicing ecosystem: the
+only practical path to free, standards-compliant XRechnung validation on modern .NET is to
+shell out to a Java process running Mustang — which is exactly what the commercial FactoorSharp
+tier does. There is also
+[concern in the community](https://github.com/stephanstapel/ZUGFeRD-csharp/discussions/316)
+that Saxonica's near-monopoly on XSLT 2.0/3.0 processing creates a long-term open source risk,
+since the Java ecosystem's Saxon-HE (also MPL-2.0) could in principle face the same commercial
+pressure at any time.
+
+For Java, this problem does not arise: Saxon-HE on the JVM is fully open source, supports XSLT
+3.0, and integrates cleanly — which is one more structural reason why mustangproject can offer
+validation as a first-class feature while ZUGFeRD-csharp cannot, at least not without
+commercial dependencies.
+
+---
+
 ## Summary
 
 | Topic | Observation |
@@ -190,6 +229,7 @@ commercial tier. This is a risk worth factoring into dependency decisions.
 | ZUGFeRD test suite | No official equivalent; community corpus exists but is unofficial |
 | mustangproject | Java, fully open source, validation built in via KoSIT Schematron |
 | ZUGFeRD-csharp | .NET, moving to open-core from v18; validation in commercial tier |
+| XSLT 2.0 on .NET | Built-in stack is XSLT 1.0 only; Saxon-HE requires .NET Framework; SaxonCS is commercial — structural barrier to free validation on modern .NET |
 | XRechnung vs ZUGFeRD | Different formats, different governance; XRechnung is legally mandatory for B2G |
 | B2B obligation | Receiving mandatory since Jan 2025; sending from Jan 2027 |
 | "Certified by KoSIT" | No such scheme exists; passing the KoSIT validator is the conformance test |
