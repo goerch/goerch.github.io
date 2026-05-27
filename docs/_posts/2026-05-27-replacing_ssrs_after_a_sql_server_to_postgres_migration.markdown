@@ -1,4 +1,12 @@
-# Replacing SSRS After a SQL Server to PostgreSQL Migration
+---
+layout: post
+title:  "Replacing SSRS After a SQL Server to PostgreSQL Migration"
+date:   2026-05-27 9:00:00 +0200
+categories: reporting open-source data-engineering postgresql
+---
+*A practitioner's notes on leaving SQL Server Reporting Services behind, choosing open-source tooling under budget pressure, and validating the decision unconventionally.*
+
+---
 
 ## Context
 
